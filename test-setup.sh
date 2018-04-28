@@ -1,11 +1,93 @@
 #!/bin/bash
 ## test-setup
-## =stub=
-## version 0.0.0 - stub
-exit 0
+## - setup bitbake tools and build yocto image for
+##   emulation to run on qemu
+## version 0.0.1 - initial
 ##################################################
+. $( dirname ${0} )/sh2/error.sh # error handling
+error "true"			 # show errors
+##################################################
+# test-setup-install-build-host-packages
+# - build host packages
+# assumptions:
+# + build host packages install successfully when
+#   proceeded by update
+#-------------------------------------------------
+test-setup-install-build-host-packages-list() {
+ cat << EOF
+gawk
+wget
+git-core
+diffstat
+unzip
+texinfo
+gcc-multilib
+build-essential
+chrpath
+socat
+cpio
+python
+python3
+python3-pip
+python3-pexpect
+xz-utils
+debianutils
+iputils-ping
+libsdl1.2-dev
+xterm
+EOF
+}
+test-setup-install-build-host-packages() {
+  {
+    sudo apt-get update -y 
+    sudo apt-get install $( ${FUNCNAME}-list ) -y
+  }
+}
+#-------------------------------------------------
+# test-setup-get-poky
+# - get yocto poky
+# assertion: packages installed successfully
+# to do:
+# + get latest version, using v2.4 for now
+test-setup-get-poky() {
+  {
+    git clone git://git.yoctoproject.org/poky
+    cd poky
+    git checkout tags/yocto-2.4 -b poky_2.4 
+  }
+}
+#-------------------------------------------------
+# test-setup-build
+# - build for emulation
+# assertion: in ~/poky
+# to do:
+# + finish implementation left in comments
+# ++ ex) configure 'poky...
+test-setup-build() {
+  {
+    git checkout -b rocko origin/rocko
+    ## initialize build environment
+    source oe-init-build-env 
+    # configure 'poky/build/conf/local.conf'
+    bitbake core-image-minimal
+    # run 'runqemu qemux86'
+    # stop qemu Ctrl-C
+  }
+}
+#-------------------------------------------------
+test-setup-initialize() {
+  {
+    cd ~ # go homes
+  }
+}
+#-------------------------------------------------
 test-setup() {
- true
+  {
+    ${FUNCNAME}-initialize
+    ${FUNCNAME}-install-build-host-packages
+    ${FUNCNAME}-get-poky
+    ${FUNCNAME}-build
+  }
 }
 ##################################################
 if [ ${#} -eq 0 ] 
