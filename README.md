@@ -10,7 +10,7 @@ bash scripts for yocto project
 
 ```
 {
-  git clone https://github.com/temptemp3/yocto.git
+  git clone --recursive https://github.com/temptemp3/yocto.git
   bash yocto/test-setup.sh
 }
 ```
