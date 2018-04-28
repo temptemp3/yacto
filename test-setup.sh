@@ -2,7 +2,7 @@
 ## test-setup
 ## - setup bitbake tools and build yocto image for
 ##   emulation to run on qemu
-## version 0.0.1 - initial
+## version 0.0.2 - case-apt-get
 ##################################################
 . $( dirname ${0} )/sh2/error.sh # error handling
 error "true"			 # show errors
@@ -13,7 +13,7 @@ error "true"			 # show errors
 # + build host packages install successfully when
 #   proceeded by update
 #-------------------------------------------------
-test-setup-install-build-host-packages-list() {
+test-setup-install-build-host-packages-case-apt-get-list() {
  cat << EOF
 gawk
 wget
@@ -37,11 +37,24 @@ libsdl1.2-dev
 xterm
 EOF
 }
-test-setup-install-build-host-packages() {
-  {
-    sudo apt-get update -y 
-    sudo apt-get install $( ${FUNCNAME}-list ) -y
+test-setup-install-build-host-packages-case-apt-get() {
+ sudo apt-get update -y 
+ sudo apt-get install $( ${FUNCNAME}-list ) -y
+}
+test-setup-install-build-host-packages-case() {
+ case $( uname -a ) in
+  Linux*Ubuntu|Linux*Debian) {
+   ${FUNCNAME}-apt-get
+  } ;; 
+  *) {
+   false || {
+    error "build host packages not yet implemented for '$( uname -a )'" "${FUNCNAME}" "${LINENO}"
+    false
+   }
   }
+}
+test-setup-install-build-host-packages() {
+ ${FUNCNAME}-case
 }
 #-------------------------------------------------
 # test-setup-get-poky
@@ -50,11 +63,9 @@ test-setup-install-build-host-packages() {
 # to do:
 # + get latest version, using v2.4 for now
 test-setup-get-poky() {
-  {
-    git clone git://git.yoctoproject.org/poky
-    cd poky
-    git checkout tags/yocto-2.4 -b poky_2.4 
-  }
+ git clone git://git.yoctoproject.org/poky
+ cd poky
+ git checkout tags/yocto-2.4 -b poky_2.4 
 }
 #-------------------------------------------------
 # test-setup-build
@@ -64,30 +75,24 @@ test-setup-get-poky() {
 # + finish implementation left in comments
 # ++ ex) configure 'poky...
 test-setup-build() {
-  {
-    git checkout -b rocko origin/rocko
-    ## initialize build environment
-    source oe-init-build-env 
-    # configure 'poky/build/conf/local.conf'
-    bitbake core-image-minimal
-    # run 'runqemu qemux86'
-    # stop qemu Ctrl-C
-  }
+ git checkout -b rocko origin/rocko
+ ## initialize build environment
+ source oe-init-build-env 
+ # configure 'poky/build/conf/local.conf'
+ bitbake core-image-minimal
+ # run 'runqemu qemux86'
+ # stop qemu Ctrl-C
 }
 #-------------------------------------------------
 test-setup-initialize() {
-  {
-    cd ~ # go homes
-  }
+ cd ~ # go homes
 }
 #-------------------------------------------------
 test-setup() {
-  {
-    ${FUNCNAME}-initialize
-    ${FUNCNAME}-install-build-host-packages
-    ${FUNCNAME}-get-poky
-    ${FUNCNAME}-build
-  }
+ ${FUNCNAME}-initialize
+ ${FUNCNAME}-install-build-host-packages
+ ${FUNCNAME}-get-poky
+ ${FUNCNAME}-build
 }
 ##################################################
 if [ ${#} -eq 0 ] 
