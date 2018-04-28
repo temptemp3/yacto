@@ -2,7 +2,7 @@
 ## test-setup
 ## - setup bitbake tools and build yocto image for
 ##   emulation to run on qemu
-## version 0.0.2 - case-apt-get
+## version 0.0.3 - fix case
 ##################################################
 . $( dirname ${0} )/sh2/error.sh # error handling
 error "true"			 # show errors
@@ -43,7 +43,7 @@ test-setup-install-build-host-packages-case-apt-get() {
 }
 test-setup-install-build-host-packages-case() {
  case $( uname -a ) in
-  Linux*Ubuntu|Linux*Debian) {
+  *Ubuntu*|*Debian*) {
    ${FUNCNAME}-apt-get
   } ;; 
   *) {
@@ -51,7 +51,8 @@ test-setup-install-build-host-packages-case() {
     error "build host packages not yet implemented for '$( uname -a )'" "${FUNCNAME}" "${LINENO}"
     false
    }
-  }
+  } ;;
+ esac
 }
 test-setup-install-build-host-packages() {
  ${FUNCNAME}-case
