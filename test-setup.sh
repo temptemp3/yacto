@@ -2,7 +2,7 @@
 ## test-setup
 ## - setup bitbake tools and build yocto image for
 ##   emulation to run on qemu
-## version 0.0.3 - fix case
+## version 0.0.4 - test-setup-run
 ##################################################
 . $( dirname ${0} )/sh2/error.sh # error handling
 error "true"			 # show errors
@@ -71,6 +71,7 @@ test-setup-get-poky() {
 #-------------------------------------------------
 # test-setup-build
 # - build for emulation
+# version 0.0.2 - 
 # assertion: in ~/poky
 # to do:
 # + finish implementation left in comments
@@ -81,7 +82,14 @@ test-setup-build() {
  source oe-init-build-env 
  # configure 'poky/build/conf/local.conf'
  bitbake core-image-minimal
+}
+#-------------------------------------------------
+# test-setup-run
+# - run image built in test-setup-build
+test-setup-run() {
+ # may test image
  # run 'runqemu qemux86'
+ runqemu qemux86
  # stop qemu Ctrl-C
 }
 #-------------------------------------------------
@@ -94,6 +102,7 @@ test-setup() {
  ${FUNCNAME}-install-build-host-packages
  ${FUNCNAME}-get-poky
  ${FUNCNAME}-build
+ ${FUNCNAME}-run
 }
 ##################################################
 if [ ${#} -eq 0 ] 
