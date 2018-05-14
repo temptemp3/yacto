@@ -2,7 +2,7 @@
 ## test-setup
 ## - setup bitbake tools and build yocto image for
 ##   emulation to run on qemu
-## version 0.0.4 - test-setup-run
+## version 0.1.0 - accept image_name parameter
 ##################################################
 . $( dirname ${0} )/sh2/error.sh # error handling
 error "true"			 # show errors
@@ -107,7 +107,10 @@ test-setup() {
 ##################################################
 if [ ${#} -eq 0 ] 
 then
- true
+ image_name="core-image-minimal"
+elif [ ${#} -eq 1 ]
+then
+ image_name="${1}"
 else
  exit 1 # wrong args
 fi
